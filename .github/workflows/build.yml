@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -23,3 +25,9 @@ jobs:
         with:
           name: Inicio-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk Inicio-launcher.apk
+          gh release create "apk-${{ github.run_number }}" Inicio-launcher.apk --title "Launcher Inicio (build ${{ github.run_number }})" --notes "APK pronto para instalar com adb install -r"
